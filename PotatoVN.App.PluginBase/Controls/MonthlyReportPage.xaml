@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="PotatoVN.App.PluginBase.Controls.MonthlyReportPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prefabs="using:PotatoVN.App.PluginBase.Controls.Prefabs"
+    mc:Ignorable="d">
+
+    <Grid Padding="36,24,36,24">
+        <Grid Visibility="{x:Bind LoadingVisibility, Mode=OneWay}"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              RowDefinitions="Auto,Auto"
+              RowSpacing="16">
+            <ProgressRing Grid.Row="0" IsActive="True" Width="80" Height="80"/>
+            <TextBlock Grid.Row="1" Text="正在生成月报..." Style="{ThemeResource BodyTextStyle}"/>
+        </Grid>
+
+        <ScrollViewer Visibility="{x:Bind ContentVisibility, Mode=OneWay}">
+            <StackPanel Spacing="20" Margin="0,0,18,0">
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="游戏月报" Style="{ThemeResource PageTitleStyle}"/>
+                        <TextBlock Text="看看这个月都把时间交给了哪些游戏。" Style="{ThemeResource DescriptionTextStyle}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Button Content="上个月" Click="PreviousMonthButton_OnClick"/>
+                        <TextBlock Text="{x:Bind Report.MonthTitle, Mode=OneWay}" Style="{ThemeResource BodyTextStyle}" VerticalAlignment="Center" MinWidth="120" TextAlignment="Center"/>
+                        <Button Content="下个月" Click="NextMonthButton_OnClick"/>
+                        <Button Content="刷新" Click="RefreshButton_OnClick"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Visibility="{x:Bind EmptyVisibility, Mode=OneWay}"
+                      MinHeight="260"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                        <FontIcon Glyph="&#xE7F4;" FontSize="42" Opacity="0.6"/>
+                        <TextBlock Text="这个月还没有游玩记录" Style="{ThemeResource SubtitleTextBlockStyle}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="切换到其他月份，或者先启动几部游戏再回来看看。" Style="{ThemeResource DescriptionTextStyle}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Visibility="{x:Bind ReportContentVisibility, Mode=OneWay}" Spacing="20">
+                    <Grid ColumnDefinitions="*,*,*,*,*" ColumnSpacing="12">
+                        <Border Grid.Column="0" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="总时长" Style="{ThemeResource DescriptionTextStyle}"/>
+                                <TextBlock Text="{x:Bind Report.TotalTimeText, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="游玩天数" Style="{ThemeResource DescriptionTextStyle}"/>
+                                <TextBlock Text="{x:Bind Report.PlayedDaysText, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="游戏数" Style="{ThemeResource DescriptionTextStyle}"/>
+                                <TextBlock Text="{x:Bind Report.PlayedGameCountText, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="3" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="新入库" Style="{ThemeResource DescriptionTextStyle}"/>
+                                <TextBlock Text="{x:Bind Report.NewGamesCountText, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="4" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="日均" Style="{ThemeResource DescriptionTextStyle}"/>
+                                <TextBlock Text="{x:Bind Report.AverageDailyTimeText, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="24">
+                        <Border Grid.Column="0" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="本月主打" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                <prefabs:GalgamePrefab Galgame="{x:Bind Report.FavoriteGame, Mode=OneWay}" ItemScale="0.75"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="游戏数据" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                <ItemsControl ItemsSource="{x:Bind Report.AllGames, Mode=OneWay}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Margin="0,0,0,12">
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" Style="{ThemeResource BodyTextStyle}"/>
+                                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding TimeText}" Style="{ThemeResource SmallTextStyle}"/>
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding ShareText}" Style="{ThemeResource DescriptionTextStyle}" Margin="0,4,12,0"/>
+                                                <ProgressBar Grid.Row="1" Grid.Column="1" Width="220" Value="{Binding Ratio}" Maximum="1" Margin="0,6,0,0"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+                        <Border Grid.Column="0" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="每日趋势" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                <ItemsControl ItemsSource="{x:Bind Report.DailyPlayData, Mode=OneWay}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="48,Auto,*" ColumnSpacing="8" Margin="0,3,0,3">
+                                                <TextBlock Grid.Column="0" Text="{Binding DayText}" Style="{ThemeResource SmallTextStyle}" VerticalAlignment="Center"/>
+                                                <Border Grid.Column="1" Height="8" Width="{Binding BarWidth}" CornerRadius="4" Background="{ThemeResource AccentFillColorDefaultBrush}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding TimeText}" Style="{ThemeResource DescriptionTextStyle}" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="Top 游戏" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                <ItemsControl ItemsSource="{x:Bind Report.TopGames, Mode=OneWay}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Margin="0,0,0,12">
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" Style="{ThemeResource BodyTextStyle}"/>
+                                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding TimeText}" Style="{ThemeResource SmallTextStyle}"/>
+                                                <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Value="{Binding Ratio}" Maximum="1" Margin="0,6,0,0"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+                        <Border Grid.Column="0" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="游玩习惯" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                <TextBlock Text="{x:Bind HabitSummary, Mode=OneWay}" Style="{ThemeResource DescriptionTextStyle}"/>
+                                <ItemsControl ItemsSource="{x:Bind Report.WeekdayPlayData, Mode=OneWay}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="48,Auto,*" ColumnSpacing="8" Margin="0,3,0,3">
+                                                <TextBlock Grid.Column="0" Text="{Binding Weekday}" Style="{ThemeResource SmallTextStyle}" VerticalAlignment="Center"/>
+                                                <Border Grid.Column="1" Height="8" Width="{Binding BarWidth}" CornerRadius="4" Background="{ThemeResource AccentFillColorDefaultBrush}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding TimeText}" Style="{ThemeResource DescriptionTextStyle}" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="鉴赏与状态" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                <TextBlock Text="{x:Bind AppreciationSummary, Mode=OneWay}" Style="{ThemeResource DescriptionTextStyle}"/>
+                                <ItemsControl ItemsSource="{x:Bind Report.PlayTypeData, Mode=OneWay}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="*,Auto" Margin="0,3,0,3">
+                                                <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{ThemeResource SmallTextStyle}"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding CountText}" Style="{ThemeResource DescriptionTextStyle}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

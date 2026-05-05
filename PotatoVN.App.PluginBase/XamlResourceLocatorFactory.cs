@@ -34,7 +34,7 @@ namespace PotatoVN.App.PluginBase
         }
         
         /// <summary>
-        /// 使用它来代替WinUI3自己生成的InitializeComponent()（参考UserControl1）
+        /// 使用它来代替WinUI3自己生成的InitializeComponent()
         /// </summary>
         /// <param name="contentLoaded"></param>
         /// <param name="ctrl"></param>

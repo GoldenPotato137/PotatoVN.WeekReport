@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using GalgameManager.WinApp.Base.Models.Plugin;
-using Microsoft.UI.Xaml;
 using PotatoVN.App.PluginBase.Controls;
 
 namespace PotatoVN.App.PluginBase;
@@ -14,17 +13,16 @@ public partial class Plugin
         if (_uiInit) return;
         _hostApi.RegisterSidebarButton(new SidebarButtonInfo
         {
-           Id = "sidebarButton1",
-           Text = "插件按钮",
+           Id = "monthly-report",
+           Text = "月报",
            Placement = SidebarButtonPlacement.Menu, 
-           FluentGlyph = "&#xE709;",
+           FluentGlyph = "&#xE9D2;",
+           FallbackGlyph = "\uE9D2",
         }, () =>
         {
-            _hostApi.NavigateTo(typeof(ExamplePage), "Example Page");
+            _hostApi.NavigateTo(typeof(MonthlyReportPage), "游戏月报");
             return Task.CompletedTask;
         });
         _uiInit = true;
     }
-
-    public FrameworkElement CreateSettingUi() => new UserControl1(_data);
 }
